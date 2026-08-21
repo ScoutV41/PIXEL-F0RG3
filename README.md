@@ -2,7 +2,7 @@
 
 A self-contained, portable, terminal-based image editor. Old-school
 arrow-key + Enter menus, a colored ASCII banner, and your actual photos
-rendered in full color right inside the terminal - no GUI, no Canva,
+rendered in full color right inside the terminal - no GUI, no Image Editors,
 no internet required.
 
 ## What it does
