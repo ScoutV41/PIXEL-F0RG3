@@ -2,7 +2,7 @@
 
 A self-contained, portable, terminal-based image editor. Old-school
 arrow-key + Enter menus, a colored ASCII banner, and your actual photos
-rendered in full color right inside the terminal - no GUI, no Image Editors,
+rendered in full color right inside the terminal - no GUI,
 no internet required.
 
 ## What it does
@@ -40,30 +40,58 @@ pip install Pillow
 python app.py
 ```
 
-## Carrying it on a USB drive
+## Carrying it on a USB drive / giving it to non-technical people
 
-The script itself (`app.py`) is fully portable - just Python code. The
-only thing that isn't "in the box" by default is Pillow itself, since
-it has compiled components. Two good options if you want a fully
-offline, drop-anywhere setup:
+The script itself (`app.py`) is just Python code, but for someone who
+doesn't have Python installed and shouldn't have to, package it into a
+single **`PixelForge.exe`** that runs by double-clicking - no install,
+no terminal commands, no Python knowledge required from them.
 
-1. **Portable Python + pre-installed Pillow**: grab a portable Python
-   build (e.g. from python.org's embeddable zip, or WinPython), unzip
-   it onto the USB drive alongside `app.py`, and `pip install Pillow`
-   into that portable interpreter's `site-packages`. Then the whole
-   thing runs standalone on any Windows machine, no install required.
+### Option A - you have a Windows machine
 
-2. **Bundle it as a single .exe** with PyInstaller on your own machine:
-   ```
-   pip install pyinstaller
-   pyinstaller --onefile app.py
-   ```
-   Drop the resulting `dist/app.exe` on the USB drive. This is the
-   simplest "just double-click it" option for Windows laptops that
-   already have nothing installed.
+```
+pip install -r requirements.txt
+pip install pyinstaller
+pyinstaller build.spec
+```
 
-Either way, none of your images ever leave the machine - everything is
-local file I/O, no network calls at all.
+The finished exe lands at `dist\PixelForge.exe`. Copy just that one
+file anywhere - USB stick, another PC, wherever. That's the whole
+deliverable; nothing else needs to travel with it.
+
+### Option B - you *don't* have a Windows machine
+
+PyInstaller has to build on the same OS as its target, so building a
+`.exe` from Mac/Linux directly isn't reliable. Instead, this repo
+includes a GitHub Actions workflow (`.github/workflows/build.yml`)
+that builds it for you on a real, free Windows machine in the cloud:
+
+1. Push this folder to a GitHub repo (public or private, doesn't
+   matter - a private repo works fine and free Actions minutes still
+   apply).
+2. GitHub builds it automatically on every push to `main`. To trigger
+   it by hand instead, go to the repo's **Actions** tab → **Build
+   Windows EXE** → **Run workflow**.
+3. When the run finishes (a couple minutes), open that run and
+   download the **PixelForge-windows** artifact - it's a zip
+   containing `PixelForge.exe`.
+4. Hand that exe to whoever needs it. They just double-click it; no
+   install step, no command line, no Python.
+
+### What the person receiving the exe actually experiences
+
+- Double-click `PixelForge.exe`
+- A black console window opens with the colored banner and menu
+- Arrow keys + Enter to navigate, exactly as described below
+- If Windows SmartScreen warns about an "unrecognized publisher"
+  (normal for an exe that isn't code-signed by a paid certificate),
+  they click **More info → Run anyway**
+- Nothing gets installed, no files are written anywhere except the
+  images they choose to edit/save - closing the window removes any
+  trace of it ever running
+
+None of this touches the network - everything is local file I/O, so
+photos never leave the machine either way (script or exe).
 
 ## Controls
 
@@ -84,4 +112,9 @@ terminal font/theme doesn't support true 24-bit color, the preview
 will look posterized/limited - this is a terminal limitation, not a
 bug in the script.
 
+## Extending it
 
+Everything filter-related lives in the `FILTERS` dict and the
+`apply_*` functions near the top of `app.py` - add a new function that
+takes and returns a Pillow `Image` and drop it in the dict to add a
+new preset.
