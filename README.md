@@ -84,9 +84,4 @@ terminal font/theme doesn't support true 24-bit color, the preview
 will look posterized/limited - this is a terminal limitation, not a
 bug in the script.
 
-## Extending it
 
-Everything filter-related lives in the `FILTERS` dict and the
-`apply_*` functions near the top of `app.py` - add a new function that
-takes and returns a Pillow `Image` and drop it in the dict to add a
-new preset.
