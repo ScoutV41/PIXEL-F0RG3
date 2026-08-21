@@ -40,7 +40,7 @@ pip install Pillow
 python app.py
 ```
 
-## Carrying it on a USB drive / for non tech savvy folks.
+## Carrying it on a USB drive / for non tech savvy folks. (Check releases for pre made EXE)
 
 The script itself (`app.py`) is just Python code, but for someone who
 doesn't have Python installed and shouldn't have to, package it into a
