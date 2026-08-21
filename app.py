@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 """
-PIXEL FORGE
-A self-contained, portable, terminal-based image editor.
-Arrow keys + Enter to navigate. Live colored ANSI preview of your images
-right inside the terminal (Windows Terminal / cmd / PowerShell / any
-modern Linux/Mac terminal). Only dependency: Pillow.
 
-Run:  python app.py
 """
 
 import os
@@ -125,7 +119,7 @@ def term_size():
     return size.columns, size.lines
 
 
-# 5-row block font for the banner (only the letters we need)
+# 5-row block font for the banner 
 FONT = {
     "P": ["#### ", "#   #", "#### ", "#    ", "#    "],
     "I": ["#####", "  #  ", "  #  ", "  #  ", "#####"],
@@ -176,11 +170,6 @@ def print_header(subtitle=""):
         print(line)
 
 
-# ---------------------------------------------------------------------------
-# Arrow-key menu (with viewport scrolling + optional extra content, e.g. an
-# image preview, rendered as part of the same frame so it never gets wiped
-# by the next redraw)
-# ---------------------------------------------------------------------------
 
 def menu(title, options, subtitle=None, footer="↑/↓ move   Enter select   Esc back", extra=None):
     """options: list of strings, or list of (label, disabled_bool) tuples.
@@ -206,7 +195,7 @@ def menu(title, options, subtitle=None, footer="↑/↓ move   Enter select   Es
         window = max(3, term_lines - fixed)
         window = min(window, len(norm))
 
-        # Keep the cursor inside the visible window, scrolling minimally.
+        # Keep the cursor inside the visible window
         if idx < scroll:
             scroll = idx
         elif idx >= scroll + window:
@@ -282,7 +271,6 @@ def pause(msg="Press Enter to continue..."):
 
 # ---------------------------------------------------------------------------
 # Terminal image rendering (ANSI truecolor half-blocks)
-# ---------------------------------------------------------------------------
 
 def render_image(img, max_width=None, max_height=None):
     """Renders img as ANSI truecolor half-blocks (▀), always preserving
@@ -297,10 +285,7 @@ def render_image(img, max_width=None, max_height=None):
     if w == 0 or h == 0:
         return ""
 
-    # max_height is in "pixel row" units (each printed text row = 2 pixel
-    # rows), so it's directly comparable to max_width (1 pixel col = 1
-    # char col). Whichever axis is tighter sets the scale — this is what
-    # keeps the render from being squashed to fit a short menu below it.
+    
     scale = min(max_width / w, max_height / h)
     new_w = max(1, round(w * scale))
     new_h = max(2, round(h * scale))
@@ -366,7 +351,6 @@ def list_images(folder: Path):
 
 # ---------------------------------------------------------------------------
 # Filters
-# ---------------------------------------------------------------------------
 
 def apply_warm(img):
     r, g, b = img.convert("RGB").split()
@@ -426,7 +410,6 @@ FILTERS = {
 
 # ---------------------------------------------------------------------------
 # Editing session (undo stack lives here)
-# ---------------------------------------------------------------------------
 
 class Session:
     def __init__(self, path: Path):
@@ -493,9 +476,6 @@ def manual_edit(sess: Session):
     while True:
         cols, lines = term_size()
         preview_src = rebuild()
-        # Reserve rows for: header(8) + blank(1) + one slider row per param
-        # + blank(1) + footer(1), so the image never pushes the sliders
-        # (or itself) off the visible screen.
         reserved = 8 + 1 + len(MANUAL_PARAMS) + 1 + 1
         image_rows = max(3, lines - reserved)
         rendered = render_image_fit(preview_src, image_rows, max_cols=min(cols - 4, 220))
